@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form</title>
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  </head>
+  <body>
+    <form id="form">
+      <label for="email">Email</label>
+      <input type="text" id="email" />
+      <p id="emailError"></p>
+      <label for="phone">Phone_No</label>
+      <input type="text" id="phone" />
+      <p id="noError"></p>
+      <button id="submit">Submit</button>
+    </form>
+
+    <script>
+      var email = document.getElementById("email");
+      var no = document.getElementById("phone");
+
+      var form = document.getElementById("form");
+
+      var mailErr = document.getElementById("emailError");
+      var noErr = document.getElementById("noError");
+
+      email.addEventListener("input", (e) => {
+        const mailPattern = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}";
+        if (!e.target.value.match(mailPattern)) {
+          mailErr.textContent = "Please enter your mail like text@gmail.com";
+        } else {
+          mailErr.textContent = "";
+        }
+      });
+
+      no.addEventListener("input", (e) => {
+        const noPattern =
+          "[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}";
+        if (!e.target.value.match(noPattern)) {
+          noErr.textContent = "Please enter your 10digit number";
+        } else {
+          noErr.textContent = "";
+        }
+      });
+
+      function saveData(mail,phone) {
+        const firebaseConfig = {
+          apiKey: "AIzaSyDlyyJArk4Nl698HtWZJ-nzon1be8fr48k",
+          authDomain: "form-db-edaab.firebaseapp.com",
+          databaseURL:"https://form-db-edaab-default-rtdb.asia-southeast1.firebasedatabase.app",
+          projectId: "form-db-edaab",
+          storageBucket: "form-db-edaab.firebasestorage.app",
+          messagingSenderId: "341913784235",
+          appId: "1:341913784235:web:9ee9c9bf49813db41a4cee",
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database().ref("ReqForm");
+        db.push({
+            email: mail,
+            phone: phone,
+        });
+      }
+
+      function validData(mail, phone) {
+        console.log(mail, phone);
+        const mailPattern = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}";
+        const noPattern =
+          "[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}";
+        
+        var isValid = true;
+        if (!mail.match(mailPattern)) {
+          mailErr.textContent = "Please enter your correct mail";
+          isValid = false;
+        }
+        if (!phone.match(noPattern)) {
+          noErr.textContent = "Please enter your correct mobile Number";
+          isValid = false;
+        }
+
+        return isValid
+      }
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        let mail = email.value;
+        let phone = no.value;
+
+        const res = validData(mail, phone);
+
+        if(res){
+            console.log(res,mail,phone);
+            saveData(mail,phone)
+            mail.textContent = "";
+            phone.textContent = "";
+        }
+      });
+    </script>
+  </body>
+</html>
